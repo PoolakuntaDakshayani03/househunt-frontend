@@ -25,10 +25,15 @@ const Register = () => {
     e.preventDefault();
     setError('');
     setSuccess('');
+
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', formData);
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/auth/register`,
+        formData
+      );
+
       setSuccess('Registration successful! Redirecting...');
-      
+
       // Wait 1 second, then redirect to login
       setTimeout(() => {
         navigate('/login');
@@ -41,9 +46,10 @@ const Register = () => {
 
   return (
     <div style={{ padding: '30px', maxWidth: '400px', margin: 'auto', fontFamily: 'Arial' }}>
-      <h2>Register</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
+      <h2 style={{ textAlign: 'center' }}>Register</h2>
+      {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
+      {success && <p style={{ color: 'green', textAlign: 'center' }}>{success}</p>}
+
       <form onSubmit={handleSubmit}>
         <input
           name="name"
@@ -82,7 +88,8 @@ const Register = () => {
         </select>
         <button type="submit" style={{ width: '100%', padding: '10px' }}>Register</button>
       </form>
-      <p style={{ marginTop: '10px' }}>
+
+      <p style={{ marginTop: '10px', textAlign: 'center' }}>
         Already have an account? <Link to="/login">Login here</Link>
       </p>
     </div>
