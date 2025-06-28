@@ -16,18 +16,23 @@ const Login = () => {
       );
 
       const { token, role } = res.data;
+
+      // ✅ Store in localStorage
       localStorage.setItem('token', token);
-      localStorage.setItem('role', role); // ✅ Store user role
+      localStorage.setItem('role', role);
 
       alert('Login successful');
 
-      // ✅ Role-based navigation
-      if (role === 'admin') {
-        navigate('/admin');
-      } else if (role === 'owner') {
-        navigate('/owner');
-      } else {
-        navigate('/');
+      // ✅ Navigate based on role
+      switch (role) {
+        case 'admin':
+          navigate('/admin');
+          break;
+        case 'owner':
+          navigate('/owner');
+          break;
+        default:
+          navigate('/');
       }
 
     } catch (err) {
