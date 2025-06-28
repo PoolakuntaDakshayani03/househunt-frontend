@@ -25,14 +25,15 @@ const Register = () => {
     e.preventDefault();
     setError('');
     setSuccess('');
+
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', formData);
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/auth/register`,
+        formData
+      );
+
       setSuccess('Registration successful! Redirecting...');
-      
-      // Wait 1 second, then redirect to login
-      setTimeout(() => {
-        navigate('/login');
-      }, 1000);
+      setTimeout(() => navigate('/login'), 1000);
     } catch (err) {
       const message = err.response?.data?.error || 'Registration failed';
       setError(message);
