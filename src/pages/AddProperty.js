@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AddProperty = () => {
   const [form, setForm] = useState({
@@ -9,25 +10,33 @@ const AddProperty = () => {
   });
 
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const existing = JSON.parse(localStorage.getItem('properties')) || [];
-    const newProperty = {
-      _id: Date.now().toString(),
-      ...form,
-    };
+    try {
+      // 👇 ACTUAL API CALL TO BACKEND
+      const response = await axios.post(
+        'https://househunt-backend.onrender.com/api/properties',
+        form,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    const updatedList = [...existing, newProperty];
-    localStorage.setItem('properties', JSON.stringify(updatedList));
-
-    alert('Property added!');
-    navigate('/owner');
+      alert('✅ Property added successfully!');
+      navigate('/owner');
+    } catch (err) {
+      console.error('Add Property Error:', err);
+      alert(err.response?.data?.error || '❌ Failed to add property');
+    }
   };
 
   return (
@@ -53,6 +62,7 @@ const AddProperty = () => {
           />
           <input
             name="rent"
+            type="number"
             placeholder="Rent"
             value={form.rent}
             onChange={handleChange}
