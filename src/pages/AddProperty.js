@@ -23,18 +23,19 @@ const AddProperty = () => {
 
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/owner/properties`,
+        `${process.env.REACT_APP_API_BASE_URL}/properties`, // ✅ Correct endpoint
         form,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`, // ✅ Send token for authentication
           },
         }
       );
       alert('Property added successfully!');
-      navigate('/owner');
+      navigate('/owner'); // ✅ Redirect to Owner Dashboard
     } catch (err) {
-      console.error(err);
+      console.error('Error adding property:', err);
       alert(err.response?.data?.error || 'Failed to add property');
     }
   };
