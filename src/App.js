@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import OwnerDashboard from './pages/ownerDashboard';
 import AdminPanel from './pages/AdminPanel';
+import AddProperty from './pages/AddProperty'; // ✅ Import AddProperty
 
 function App() {
   const token = localStorage.getItem('token');
@@ -24,6 +25,12 @@ function App() {
         <Route
           path="/owner"
           element={token && role === 'owner' ? <OwnerDashboard /> : <Navigate to="/login" />}
+        />
+
+        {/* Add Property (Protected) */}
+        <Route
+          path="/add-property"
+          element={token && role === 'owner' ? <AddProperty /> : <Navigate to="/login" />}
         />
 
         {/* Admin Panel (Protected) */}
