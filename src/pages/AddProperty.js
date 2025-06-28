@@ -1,44 +1,37 @@
-// src/pages/AddProperty.js
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const AddProperty = () => {
-  const [form, setForm] = useState({
-    title: '',
-    location: '',
-    rent: '',
-  });
-
+  const [form, setForm] = useState({ title: '', location: '', rent: '' });
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/properties`, // ✅ Correct endpoint
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/properties`,
         form,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`, // ✅ Send token for authentication
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert('Property added successfully!');
-      navigate('/owner'); // ✅ Redirect to Owner Dashboard
+      alert('✅ Property added!');
+      navigate('/owner');
     } catch (err) {
-      console.error('Error adding property:', err);
+      console.error('Add Property Error:', err.response?.data || err.message);
       alert(err.response?.data?.error || 'Failed to add property');
     }
   };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* inputs similar to what you have */}
+      <button type="submit">Add Property</button>
+    </form>
+  );
+};
+export default AddProperty;
+
 
   return (
     <div style={styles.container}>
