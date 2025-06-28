@@ -22,7 +22,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/owner" element={token && role === 'owner'
-          ? <OwnerDashboard /> : <Navigate to="/login" />} />
+          ? <ownerDashboard /> : <Navigate to="/login" />} />
         <Route path="/add-property" element={token && role === 'owner'
           ? <AddProperty /> : <Navigate to="/login" />} />
         <Route path="/admin" element={token && role === 'admin'
