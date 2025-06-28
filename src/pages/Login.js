@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,9 +20,14 @@ const Login = () => {
 
       alert('Login successful');
 
-      if (role === 'admin') navigate('/admin');
-      else if (role === 'owner') navigate('/owner');
-      else navigate('/');
+      // ✅ Reload to trigger App.js re-evaluation of token/role
+      if (role === 'admin') {
+        window.location.href = '/admin';
+      } else if (role === 'owner') {
+        window.location.href = '/owner';
+      } else {
+        window.location.href = '/';
+      }
     } catch (err) {
       alert(err.response?.data?.error || 'Login failed');
     }
