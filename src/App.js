@@ -5,19 +5,23 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import OwnerDashboard from './pages/ownerDashboard';
 import AddProperty from './pages/AddProperty';
-import AdminPanel from './pages/AdminPanel'; // Optional if you have admin logic
+import AdminPanel from './pages/AdminPanel';
 
 function App() {
-  const [token, setToken] = useState(null);
-  const [role, setRole] = useState(null);
+  const [token, setToken] = useState(undefined); // undefined means not loaded yet
+  const [role, setRole] = useState(undefined);
 
   useEffect(() => {
-    // This will run after login and set token/role properly
     const t = localStorage.getItem('token');
     const r = localStorage.getItem('role');
     setToken(t);
     setRole(r);
   }, []);
+
+  // 🔁 Wait for useEffect to load localStorage before rendering routes
+  if (token === undefined || role === undefined) {
+    return <div>Loading...</div>; // Or a spinner
+  }
 
   return (
     <Router>
@@ -42,7 +46,7 @@ function App() {
         <Route path="/add-property" element={token && role === 'owner' ? <AddProperty /> : <Navigate to="/login" />} />
         <Route path="/admin" element={token && role === 'admin' ? <AdminPanel /> : <Navigate to="/login" />} />
 
-        {/* Catch-all route */}
+        {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
