@@ -10,9 +10,8 @@ const AddProperty = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/properties`,
-        form,
+      const res = await axios.post(`https://househunt-backend.onrender.com/api/owner/properties`,form
+
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert('✅ Property added!');
