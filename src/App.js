@@ -1,36 +1,35 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Register from './pages/Register';
 import Login from './pages/Login';
-import OwnerDashboard from './pages/ownerDashboard'; // This is fine if the file is named ownerDashboard.js
+import OwnerDashboard from './pages/OwnerDashboard';
 import AddProperty from './pages/AddProperty';
+import AdminPanel from './pages/AdminPanel';
+
 function App() {
   const token = localStorage.getItem('token');
+  const role = localStorage.getItem('role');
 
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
-        {/* Show Register first */}
-        <Route path="/" element={<Register />} />
+        <Route path="/" element={token
+          ? role === 'owner' ? <Navigate to="/owner" />
+            : role === 'admin' ? <Navigate to="/admin" />
+            : <Navigate to="/login" />
+          : <Register />} />
 
-        {/* Login route */}
-        <Route path="/login" element={<Login />} /> 
-
-        {/* Owner dashboard (protected route) */}
-        <Route
-          path="/owner"
-          element={token ? <OwnerDashboard /> : <Navigate to="/login" />}
-        />
-        <Route
-           path="/add-property"
-           element={token ? <AddProperty /> : <Navigate to="/login" />}
-        />
-
-        {/* Catch-all redirect */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/owner" element={token && role === 'owner'
+          ? <OwnerDashboard /> : <Navigate to="/login" />} />
+        <Route path="/add-property" element={token && role === 'owner'
+          ? <AddProperty /> : <Navigate to="/login" />} />
+        <Route path="/admin" element={token && role === 'admin'
+          ? <AdminPanel /> : <Navigate to="/login" />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 }
 
