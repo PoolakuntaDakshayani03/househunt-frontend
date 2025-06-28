@@ -3,50 +3,31 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 import Register from './pages/Register';
 import Login from './pages/Login';
-import OwnerDashboard from './pages/ownerDashboard';
+import OwnerDashboard from './pages/ownerDashboard'; // This is fine if the file is named ownerDashboard.js
 import AddProperty from './pages/AddProperty';
-import AdminPanel from './pages/AdminPanel';
-
 function App() {
-  // ✅ Read directly from localStorage
   const token = localStorage.getItem('token');
-  const role = localStorage.getItem('role');
 
   return (
     <Router>
       <Routes>
-        {/* ✅ Root path — redirect based on role */}
-        <Route path="/" element={
-          token
-            ? role === 'owner'
-              ? <Navigate to="/owner" />
-              : role === 'admin'
-              ? <Navigate to="/admin" />
-              : <Navigate to="/login" />
-            : <Register />
-        } />
+        {/* Show Register first */}
+        <Route path="/" element={<Register />} />
 
-        {/* ✅ Public routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        {/* Login route */}
+        <Route path="/login" element={<Login />} /> 
 
-        {/* ✅ Protected owner routes */}
+        {/* Owner dashboard (protected route) */}
         <Route
           path="/owner"
-          element={token && role === 'owner' ? <OwnerDashboard /> : <Navigate to="/login" />}
+          element={token ? <OwnerDashboard /> : <Navigate to="/login" />}
         />
         <Route
-          path="/add-property"
-          element={token && role === 'owner' ? <AddProperty /> : <Navigate to="/login" />}
+           path="/add-property"
+           element={token ? <AddProperty /> : <Navigate to="/login" />}
         />
 
-        {/* ✅ Admin panel route */}
-        <Route
-          path="/admin"
-          element={token && role === 'admin' ? <AdminPanel /> : <Navigate to="/login" />}
-        />
-
-        {/* ✅ Fallback route */}
+        {/* Catch-all redirect */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
