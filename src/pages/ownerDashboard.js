@@ -1,22 +1,42 @@
-// src/pages/ownerDashboard.js
+// src/pages/OwnerDashboard.js
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 function OwnerDashboard() {
   const [properties, setProperties] = useState([]);
+  const token = localStorage.getItem('token');
 
-  // Load from localStorage when component mounts
   useEffect(() => {
-    const storedProperties = JSON.parse(localStorage.getItem('properties')) || [];
-    setProperties(storedProperties);
-  }, []);
+    // Fetch properties for this owner from backend
+    const fetchProperties = async () => {
+      try {
+        const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/owner/properties`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setProperties(res.data);
+      } catch (err) {
+        console.error('Error fetching properties:', err.response?.data || err.message);
+      }
+    };
 
-  // Delete a property and update localStorage
-  const deleteProperty = (id) => {
-    const updated = properties.filter(p => p._id !== id);
-    setProperties(updated);
-    localStorage.setItem('properties', JSON.stringify(updated));
+    fetchProperties();
+  }, [token]);
+
+  const deleteProperty = async (id) => {
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/owner/properties/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setProperties(prev => prev.filter(p => p._id !== id));
+    } catch (err) {
+      console.error('Error deleting property:', err.response?.data || err.message);
+    }
   };
 
   return (
@@ -53,7 +73,7 @@ function OwnerDashboard() {
               <h3 style={{ color: '#34495e' }}>{p.title}</h3>
               <p style={{ color: '#7f8c8d' }}>
                 <strong>Location:</strong> {p.location}<br />
-                <strong>Rent:</strong> {p.rent}
+                <strong>Rent:</strong> ₹{p.rent}
               </p>
               <button onClick={() => deleteProperty(p._id)} style={{
                 backgroundColor: '#e74c3c',
