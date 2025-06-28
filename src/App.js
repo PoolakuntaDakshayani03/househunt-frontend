@@ -1,38 +1,38 @@
+// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import Register from './pages/Register';
 import Login from './pages/Login';
-import OwnerDashboard from './pages/ownerDashboard'; // This is fine if the file is named ownerDashboard.js
-import AdminPanel from './pages/AdminPanel'; 
-import AddProperty from './pages/AddProperty';
+import OwnerDashboard from './pages/ownerDashboard';
+import AdminPanel from './pages/AdminPanel';
+
 function App() {
   const token = localStorage.getItem('token');
+  const role = localStorage.getItem('role'); // stored after login
 
   return (
     <Router>
       <Routes>
-        {/* Show Register first */}
+        {/* Default: Show register */}
         <Route path="/" element={<Register />} />
 
-        {/* Login route */}
-        <Route path="/login" element={<Login />} /> 
+        {/* Login */}
+        <Route path="/login" element={<Login />} />
 
-        {/* Owner dashboard (protected route) */}
+        {/* Owner Dashboard (Protected) */}
         <Route
           path="/owner"
-          element={token ? <OwnerDashboard /> : <Navigate to="/login" />}
-        />
-        <Route
-           path="/add-property"
-           element={token ? <AddProperty /> : <Navigate to="/login" />}
-        />
-         <Route
-              path="/admin"
-              element={<AdminPanel />}
+          element={token && role === 'owner' ? <OwnerDashboard /> : <Navigate to="/login" />}
         />
 
-        {/* Catch-all redirect */}
+        {/* Admin Panel (Protected) */}
+        <Route
+          path="/admin"
+          element={token && role === 'admin' ? <AdminPanel /> : <Navigate to="/login" />}
+        />
+
+        {/* Catch all */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
