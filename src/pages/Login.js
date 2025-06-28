@@ -15,9 +15,21 @@ const Login = () => {
         { email, password }
       );
 
-      localStorage.setItem('token', res.data.token);
+      const { token, role } = res.data;
+      localStorage.setItem('token', token);
+      localStorage.setItem('role', role); // ✅ Store user role
+
       alert('Login successful');
-      navigate('/owner');
+
+      // ✅ Role-based navigation
+      if (role === 'admin') {
+        navigate('/admin');
+      } else if (role === 'owner') {
+        navigate('/owner');
+      } else {
+        navigate('/');
+      }
+
     } catch (err) {
       alert(err.response?.data?.error || 'Login failed');
     }
