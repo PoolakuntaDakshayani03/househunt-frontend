@@ -10,31 +10,14 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/auth/login`,
-        { email, password }
-      );
+      const res = await axios.post('http://localhost:5000/api/auth/login', {
+        email,
+        password,
+      });
 
-      const { token, role } = res.data;
-
-      // ✅ Store in localStorage
-      localStorage.setItem('token', token);
-      localStorage.setItem('role', role);
-
+      localStorage.setItem('token', res.data.token);
       alert('Login successful');
-
-      // ✅ Navigate based on role
-      switch (role) {
-        case 'admin':
-          navigate('/admin');
-          break;
-        case 'owner':
-          navigate('/owner');
-          break;
-        default:
-          navigate('/');
-      }
-
+      navigate('/owner');
     } catch (err) {
       alert(err.response?.data?.error || 'Login failed');
     }
