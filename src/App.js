@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Register from './pages/Register';
 import Login from './pages/Login';
 import OwnerDashboard from './pages/ownerDashboard'; // This is fine if the file is named ownerDashboard.js
+import AdminPanel from './pages/AdminPanel'; 
 import AddProperty from './pages/AddProperty';
 function App() {
   const token = localStorage.getItem('token');
@@ -25,6 +26,10 @@ function App() {
         <Route
            path="/add-property"
            element={token ? <AddProperty /> : <Navigate to="/login" />}
+        />
+         <Route
+              path="/admin"
+              element={<AdminPanel />}
         />
 
         {/* Catch-all redirect */}
