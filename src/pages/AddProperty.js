@@ -1,5 +1,8 @@
+// src/pages/AddProperty.js
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AddProperty = () => {
   const [form, setForm] = useState({
@@ -9,25 +12,31 @@ const AddProperty = () => {
   });
 
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const existing = JSON.parse(localStorage.getItem('properties')) || [];
-    const newProperty = {
-      _id: Date.now().toString(),
-      ...form,
-    };
-
-    const updatedList = [...existing, newProperty];
-    localStorage.setItem('properties', JSON.stringify(updatedList));
-
-    alert('Property added!');
-    navigate('/owner');
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/owner/properties`,
+        form,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert('Property added successfully!');
+      navigate('/owner');
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.error || 'Failed to add property');
+    }
   };
 
   return (
@@ -53,6 +62,7 @@ const AddProperty = () => {
           />
           <input
             name="rent"
+            type="number"
             placeholder="Rent"
             value={form.rent}
             onChange={handleChange}
