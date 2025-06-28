@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import Register from './pages/Register';
@@ -8,25 +8,14 @@ import AddProperty from './pages/AddProperty';
 import AdminPanel from './pages/AdminPanel';
 
 function App() {
-  const [token, setToken] = useState(undefined); // undefined means not loaded yet
-  const [role, setRole] = useState(undefined);
-
-  useEffect(() => {
-    const t = localStorage.getItem('token');
-    const r = localStorage.getItem('role');
-    setToken(t);
-    setRole(r);
-  }, []);
-
-  // 🔁 Wait for useEffect to load localStorage before rendering routes
-  if (token === undefined || role === undefined) {
-    return <div>Loading...</div>; // Or a spinner
-  }
+  // ✅ Read directly from localStorage
+  const token = localStorage.getItem('token');
+  const role = localStorage.getItem('role');
 
   return (
     <Router>
       <Routes>
-        {/* Redirect root based on role */}
+        {/* ✅ Root path — redirect based on role */}
         <Route path="/" element={
           token
             ? role === 'owner'
@@ -37,16 +26,27 @@ function App() {
             : <Register />
         } />
 
-        {/* Public routes */}
+        {/* ✅ Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Protected routes */}
-        <Route path="/owner" element={token && role === 'owner' ? <OwnerDashboard /> : <Navigate to="/login" />} />
-        <Route path="/add-property" element={token && role === 'owner' ? <AddProperty /> : <Navigate to="/login" />} />
-        <Route path="/admin" element={token && role === 'admin' ? <AdminPanel /> : <Navigate to="/login" />} />
+        {/* ✅ Protected owner routes */}
+        <Route
+          path="/owner"
+          element={token && role === 'owner' ? <OwnerDashboard /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/add-property"
+          element={token && role === 'owner' ? <AddProperty /> : <Navigate to="/login" />}
+        />
 
-        {/* Catch-all */}
+        {/* ✅ Admin panel route */}
+        <Route
+          path="/admin"
+          element={token && role === 'admin' ? <AdminPanel /> : <Navigate to="/login" />}
+        />
+
+        {/* ✅ Fallback route */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
