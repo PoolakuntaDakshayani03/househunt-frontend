@@ -1,33 +1,23 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/auth/login`,
-        { email, password }
-      );
+      const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`, {
+        email,
+        password,
+      });
 
-      const { token, role } = res.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('role', role);
-
+      localStorage.setItem('token', res.data.token);
       alert('Login successful');
-
-      // ✅ Reload to trigger App.js re-evaluation of token/role
-      if (role === 'admin') {
-        window.location.href = '/admin';
-      } else if (role === 'owner') {
-        window.location.href = '/owner';
-      } else {
-        window.location.href = '/';
-      }
+      navigate('/owner');
     } catch (err) {
       alert(err.response?.data?.error || 'Login failed');
     }
